@@ -1,0 +1,43 @@
+- name: Playbook para instalar nginx
+  hosts: "{{hosts}}"
+  tasks: 
+  - name: Instalando nginx no Ubuntu
+    become: yes
+    apt: name=nginx state=present update_cache=yes
+    notify: nginx
+    when: ansible_distribution == "Ubuntu"
+  - name: Instalando Epel no CentOS
+    become: yes
+    yum: 
+      name: epel-release
+      state: present
+      update_cache: yes
+    notify: nginx
+    when: ansible_distribution == "CentOS"
+  - name: Instalando nginx no CentOS
+    become: yes
+    yum:
+      name: nginx
+      state: present
+      update_cache: yes
+    when: ansible_distribution == "CentOS"
+  - name: Instalando cowsay
+    become: yes
+    package:
+      name: cowsay
+      state: present
+  - name: Garantindo /etc/hosts
+    become: yes
+    lineinfile: 
+      dest: /etc/hosts
+      create: yes
+      line: "{{ item }}"
+    with_items:
+    - "192.168.99.10 devops"
+    - "192.168.99.20 docker"
+    - "192.168.99.30 automation"
+  handlers: 
+  - name: nginx
+    service: 
+      name: nginx
+      state: restarted 

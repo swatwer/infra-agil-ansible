@@ -1,0 +1,29 @@
+- name: Instalando dependencias do docker
+  apt:
+    name: "{{ item }}"
+    state: present
+    update_cache: yes
+  with_items:
+    - apt-transport-https 
+    - ca-certificates
+    - curl
+    - software-properties-common
+- name: Adicionando a chave do repositório
+  apt_key:
+    url: "https://download.docker.com/linux/ubuntu/gpg"
+    state: present
+- name: Adicionando repositório
+  apt_repository:
+    repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu {{ ansible_distribution_release }} stable"
+    state: present
+- name: Instalando o Docker
+  apt:
+    name: docker-ce
+    state: present
+    update_cache: yes
+- name: Iniciando o docker
+  service:
+    name: docker
+    state: started
+    enabled: true
+    

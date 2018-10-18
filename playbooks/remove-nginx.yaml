@@ -1,0 +1,11 @@
+- name: Removendo Nginx
+  hosts: all
+  tasks:
+  - name: Parando o serviço
+    service:
+      name: nginx
+      state: stopped
+  - name: Removendo pacote nginx
+    package:
+      name: nginx
+      state: absent
